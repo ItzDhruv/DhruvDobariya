@@ -3,7 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import ProjectCard from "./ProjectCards";
 import Particle from "../Particle";
 import springboot from "../../Assets/Projects/springboot.png";
-import emotion from "../../Assets/Projects/emotion.png";
+
 import transaction from "../../Assets/Projects/transaction.png";
 import dhulai from "../../Assets/Projects/dhulai.png";
 import blogDapp from "../../Assets/Projects/blogDapp.png";
