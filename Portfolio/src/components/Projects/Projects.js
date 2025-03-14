@@ -41,7 +41,7 @@ function Projects() {
               title="Blog-Dapp-Soalna"
               description="A decentralized blogging platform on Solana, built with the Anchor framework. Users can create, like, and manage blog posts with secure on-chain storage, ensuring transparency, ownership, and censorship resistance."
               ghLink="https://github.com/ItzDhruv/Solana-Blog-Dapp.git"
-              demoLink="solana-blog-dapp-ten.vercel.app"
+              demoLink="https://solana-blog-dapp-ten.vercel.app/"
             />
           </Col>
 
@@ -63,7 +63,7 @@ function Projects() {
               title="Docs-Saver"
               description=" Is a modern document management web application built with React, Tailwind CSS, and Vite. It features an interactive card-based UI, allowing users to drag and drop files, edit descriptions, and manage file uploads and downloads seamlessly. The app also includes a tagging system and a responsive design for smooth usability across devices."
               ghLink="https://github.com/ItzDhruv/Docs-copy-React-App.git"
-              demoLink="docs-copy-react-app-fcol.vercel.app"
+              demoLink="https://docs-copy-react-app-fcol.vercel.app/"
             />
           </Col>
 
