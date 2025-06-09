@@ -9,7 +9,7 @@ import dhulai from "../../Assets/Projects/dhulai.png";
 import blogDapp from "../../Assets/Projects/blogDapp.png";
 import dsa from "../../Assets/Projects/dsa.png";
 import docs from "../../Assets/Projects/docs.png"
-
+import cryptosetu from "../../Assets/Projects/crptosetu.png";
 
 function Projects() {
   return (
@@ -23,6 +23,16 @@ function Projects() {
           Here are a few projects I've worked on recently.
         </p>
         <Row style={{ justifyContent: "center", paddingBottom: "10px" }}>
+           <Col md={4} className="project-card">
+            <ProjectCard
+              imgPath={cryptosetu}
+              isBlog={false}
+              title="Crypto Setu"
+              description="A decentralized multi-utility dApp enabling users to buy the native CS token, stake assets, purchase NFTs, and swap or trade tokens seamlessly. Designed for accessibility and transparency, it delivers an all-in-one Web3 experience with secure on-chain interactions."
+              ghLink="https://github.com/ItzDhruv/CryptoSetu.git"
+              demoLink="https://crypto-setu.vercel.app/"              
+            />
+          </Col>
           <Col md={4} className="project-card">
             <ProjectCard
               imgPath={dhulai}
@@ -49,10 +59,10 @@ function Projects() {
             <ProjectCard
               imgPath={transaction}
               isBlog={false}
-              title="Etherum-Transaction-Dapp"
-              description="A decentralized Ethereum transaction dApp that allows users to send Ethereum and track transactions in real-time, ensuring transparency and security on the blockchain."
-              ghLink="https://github.com/ItzDhruv/Fullstack-Blokchain-Projects/tree/main/WEB%203.0%20FULLSTACK%20PROJECT/Transactions%20Dapp"
-              demoLink="https://transaction-taupe-ten.vercel.app/"              
+              title="Royal casino"
+              description="A web-based crypto casino frontend built with Next.js, offering interactive games like roulette and mines with a sleek, responsive UI. Designed for entertainment, it simulates betting logic and user interactions, ready for future blockchain integration."
+              ghLink="https://github.com/ItzDhruv/Royal-Casino.git"
+              demoLink="https://royal-casino.vercel.app/"              
             />
           </Col>
 
