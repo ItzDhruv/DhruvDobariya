@@ -19,6 +19,36 @@ import { CgFileDocument } from "react-icons/cg";
 function NavBar() {
   const [expand, updateExpanded] = useState(false);
   const [navColour, updateNavbar] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+// ...
+
+<Navbar.Brand
+  href="/"
+  className="d-flex"
+  style={{ alignItems: "center" }}
+>
+  <img
+    src={DhruvImg}
+    alt="logo"
+    className="navbar-logo"
+    style={{
+      height: "40px",
+      width: "40px",
+      objectFit: "cover",
+      borderRadius: "50%",
+      transition: "box-shadow 0.3s ease-in-out",
+      boxShadow: isHovered
+        ? "0 0 12px 4px rgba(128, 0, 128, 0.6)" // Only purple glow
+        : "none",
+      zIndex: isHovered ? 1000 : "auto",
+    }}
+    onMouseEnter={() => setIsHovered(true)}
+    onMouseLeave={() => setIsHovered(false)}
+  />
+</Navbar.Brand>
+
+
 
   function scrollHandler() {
     if (window.scrollY >= 20) {
@@ -38,7 +68,11 @@ function NavBar() {
       className={navColour ? "sticky" : "navbar"}
     >
       <Container>
-        <Navbar.Brand href="/" className="d-flex" style={{ alignItems: "center" }}>
+       <Navbar.Brand
+  href="/"
+  className="d-flex"
+  style={{ alignItems: "center" }}
+>
   <img
     src={DhruvImg}
     alt="logo"
@@ -48,20 +82,16 @@ function NavBar() {
       width: "40px",
       objectFit: "cover",
       borderRadius: "50%",
-      marginRight: "10px",
-      transition: "transform 0.5s ease-in-out",
-      transformOrigin: "top", // 👈 expand down instead of up
-      zIndex: 999,            // 👈 keep it above navbar if needed
-      position: "relative",
+      transition: "all 0.3s ease-in-out",
+      boxShadow: isHovered
+        ? "0 0 12px 4px rgba(128, 0, 128, 0.6)" // Purple glow
+        : "none",
+      transform: isHovered ? "scale(1.4) translateY(1px)" : "scale(1)",
+      zIndex: isHovered ? 1000 : "auto",
     }}
+    onMouseEnter={() => setIsHovered(true)}
+    onMouseLeave={() => setIsHovered(false)}
   />
-  <style>
-    {`
-      .navbar-logo:hover {
-        transform: scale(3.5);
-      }
-    `}
-  </style>
 </Navbar.Brand>
 
         <Navbar.Toggle
