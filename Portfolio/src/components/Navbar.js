@@ -12,6 +12,7 @@ import {
   AiOutlineFundProjectionScreen,
   AiOutlineUser,
 } from "react-icons/ai";
+import DhruvImg from "../Assets/dhruv.png";
 
 import { CgFileDocument } from "react-icons/cg";
 
@@ -37,9 +38,32 @@ function NavBar() {
       className={navColour ? "sticky" : "navbar"}
     >
       <Container>
-        <Navbar.Brand href="/" className="d-flex">
-          <h1 className="purple">DD.</h1>
-        </Navbar.Brand>
+        <Navbar.Brand href="/" className="d-flex" style={{ alignItems: "center" }}>
+  <img
+    src={DhruvImg}
+    alt="logo"
+    className="navbar-logo"
+    style={{
+      height: "40px",
+      width: "40px",
+      objectFit: "cover",
+      borderRadius: "50%",
+      marginRight: "10px",
+      transition: "transform 0.5s ease-in-out",
+      transformOrigin: "top", // 👈 expand down instead of up
+      zIndex: 999,            // 👈 keep it above navbar if needed
+      position: "relative",
+    }}
+  />
+  <style>
+    {`
+      .navbar-logo:hover {
+        transform: scale(3.5);
+      }
+    `}
+  </style>
+</Navbar.Brand>
+
         <Navbar.Toggle
           aria-controls="responsive-navbar-nav"
           onClick={() => {
