@@ -10,6 +10,7 @@ import blogDapp from "../../Assets/Projects/blogDapp.png";
 import dsa from "../../Assets/Projects/dsa.png";
 import docs from "../../Assets/Projects/docs.png"
 import cryptosetu from "../../Assets/Projects/crptosetu.png";
+import game from "../../Assets/Projects/games.png";
 
 function Projects() {
   return (
@@ -23,6 +24,16 @@ function Projects() {
           Here are a few projects I've worked on recently.
         </p>
         <Row style={{ justifyContent: "center", paddingBottom: "10px" }}>
+          <Col md={4} className="project-card">
+            <ProjectCard
+              imgPath={game}
+              isBlog={false}
+              title="Gamin Arcade"
+              description="A decentralized multi-game arcade dApp where users can play blockchain-powered games, earn DT tokens, unlock NFT rewards, and trade assets seamlessly. Designed for transparency and fun, it delivers an all-in-one Web3 gaming experience with secure on-chain interactions."
+              ghLink="https://github.com/ItzDhruv/avalanche-acrade"
+              demoLink="https://avalanche-acrade.vercel.app/"              
+            />
+          </Col>
            <Col md={4} className="project-card">
             <ProjectCard
               imgPath={cryptosetu}
