@@ -5,10 +5,8 @@ import {
   SiPostman,
   SiSlack,
   SiVercel,
-  SiMacos,
 } from "react-icons/si";
-import Github from "./Github";
-import { DiGit, DiGithub, DiLinux, DiWindows } from "react-icons/di";
+import { DiGithub, DiLinux, DiWindows } from "react-icons/di";
 
 function Toolstack() {
   return (

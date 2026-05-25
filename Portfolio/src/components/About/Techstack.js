@@ -1,6 +1,5 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
-import { CgCPlusPlus } from "react-icons/cg";
 import {
   DiJavascript1,
   DiReact,
@@ -15,7 +14,7 @@ import {
   SiSpringboot,
   SiTypescript,
 } from "react-icons/si";
-import { TbBrandGolang, TbCurrencySolana } from "react-icons/tb";
+import {  TbCurrencySolana } from "react-icons/tb";
 
 function Techstack() {
   return (
