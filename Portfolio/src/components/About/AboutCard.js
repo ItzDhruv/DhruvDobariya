@@ -11,10 +11,9 @@ function AboutCard() {
             Hi Everyone, I am <span className="purple"> DHRUV DOBARIYA</span> { " "}
             from <span className="purple"> GUJARAT, INDIA.</span>
             <br />
-            I am currently employed as a software developer at CodeMinto.
+            I am currently employed as a software developer at TestGrid.
             <br />
-            I specialize in building secure, high-performance blockchain applications, leveraging my expertise in smart contract development and decentralized systems.
-            <br />
+            I specialize in building secure, scalable, and high-performance software applications, with experience in backend development, APIs, and modern web technologies. I also have additional expertise in blockchain development, including smart contracts and decentralized systems.            <br />
             <br />
             Apart from coding, some other activities that I love to do!
           </p>

@@ -13,7 +13,7 @@ function Home2() {
   return (
     <Container fluid className="home-about-section" id="about">
       <Container>
-        <Row>
+        {/* <Row>
           <Col md={8} className="home-about-description">
             <h1 style={{ fontSize: "2.6em" }}>
               LET ME <span className="purple"> INTRODUCE </span> MYSELF
@@ -66,7 +66,70 @@ function Home2() {
 
             </Tilt>
           </Col>
-        </Row>
+        </Row> */}
+        <Row>
+  <Col md={8} className="home-about-description">
+    <h1 style={{ fontSize: "2.6em" }}>
+      LET ME <span className="purple"> INTRODUCE </span> MYSELF
+    </h1>
+
+    <p className="home-about-body">
+      I am a Software Developer with around 2+ years of experience building
+      scalable backend systems and modern web applications.
+      <br />
+      <br />
+      I primarily work with
+      <i>
+        <b className="purple">
+          {" "}
+          Java, Spring Boot, JavaScript, React, and REST APIs.
+        </b>
+      </i>
+      <br />
+      <br />
+      My main focus is developing
+      <i>
+        <b className="purple">
+          {" "}
+          secure, high-performance backend applications
+        </b>
+      </i>
+      , along with creating responsive and user-friendly web solutions.
+      <br />
+      <br />
+      Additionally, I have experience in
+      <i>
+        <b className="purple">
+          {" "}
+          Blockchain Development
+        </b>
+      </i>
+      , including smart contracts, Web3 applications, and decentralized systems.
+      <br />
+      <br />
+      I also enjoy contributing to open-source projects, participating in
+      hackathons, and continuously learning new technologies to improve my
+      development skills.
+    </p>
+  </Col>
+
+  <Col md={4} className="myAvtar">
+    <Tilt>
+      <img
+        src={myImg}
+        alt="avatar"
+        style={{
+          height: "200px",
+          width: "200px",
+          borderRadius: "50%",
+          objectFit: "cover",
+          display: "block",
+          margin: "0 auto",
+        }}
+      />
+    </Tilt>
+  </Col>
+</Row>
         <Row>
           <Col md={12} className="home-about-social">
             <h1>FIND ME ON</h1>
