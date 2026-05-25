@@ -4,24 +4,15 @@ import { CgCPlusPlus } from "react-icons/cg";
 import {
   DiJavascript1,
   DiReact,
-  DiNodejs,
-  DiMongodb,
-  DiPython,
   DiGit,
   DiJava,
   DiRust,
-  DiJavascript,
 } from "react-icons/di";
 import { FaHardHat } from "react-icons/fa";
 import {
-  SiRedis,
-  SiFirebase,
   SiNextdotjs,
   SiSolidity,
-  SiPostgresql,
   SiSpringboot,
-  SiVercel,
-  SiSpring,
   SiTypescript,
 } from "react-icons/si";
 import { TbBrandGolang, TbCurrencySolana } from "react-icons/tb";
