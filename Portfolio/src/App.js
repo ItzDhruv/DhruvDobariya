@@ -6,6 +6,7 @@ import About from "./components/About/About";
 import Projects from "./components/Projects/Projects";
 import Footer from "./components/Footer";
 import Resume from "./components/Resume/ResumeNew";
+import DhruvAI from "./components/DhruvAI/DhruvAI";
 import {
   BrowserRouter as Router,
   Route,
@@ -33,6 +34,7 @@ function App() {
       <Preloader load={load} />
       <div className="App" id={load ? "no-scroll" : "scroll"}>
         <Navbar />
+        <DhruvAI />
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />

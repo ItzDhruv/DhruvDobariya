@@ -14,7 +14,7 @@ import game from "../../Assets/Projects/games.png";
 
 function Projects() {
   return (
-    <Container fluid className="project-section">
+    <Container fluid className="project-section" id="projects">
       <Particle />
       <Container>
         <h1 className="project-heading">
@@ -25,7 +25,7 @@ function Projects() {
         </p>
         <Row style={{ justifyContent: "center", paddingBottom: "10px" }}>
 
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card" id="project-gaming-arcade" data-ai-card="gamin-arcade">
             <ProjectCard
               imgPath={game}
               isBlog={false}
@@ -35,7 +35,7 @@ function Projects() {
               demoLink="https://avalanche-acrade.vercel.app/"              
             />
           </Col>
-           <Col md={4} className="project-card">
+           <Col md={4} className="project-card" id="project-crypto-setu" data-ai-card="crypto-setu">
             <ProjectCard
               imgPath={cryptosetu}
               isBlog={false}
@@ -45,7 +45,7 @@ function Projects() {
                        
             />
           </Col>
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card" id="project-dhulai" data-ai-card="dhulai">
             <ProjectCard
               imgPath={dhulai}
               isBlog={false}
@@ -56,7 +56,7 @@ function Projects() {
             />
 
           </Col>
-               <Col md={4} className="project-card">
+               <Col md={4} className="project-card" id="project-royal-casino" data-ai-card="royal-casino">
             <ProjectCard
               imgPath={transaction}
               isBlog={false}
@@ -67,7 +67,7 @@ function Projects() {
             />
           </Col>
 
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card" id="project-blog-dapp" data-ai-card="blog-dapp-soalna">
             <ProjectCard
               imgPath={blogDapp}
               isBlog={false}
@@ -80,7 +80,7 @@ function Projects() {
 
      
 
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card" id="project-docs-saver" data-ai-card="docs-saver">
             <ProjectCard
               imgPath={docs}
               isBlog={false}
@@ -91,7 +91,7 @@ function Projects() {
             />
           </Col>
 
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card" id="project-springboot-backend" data-ai-card="product-backend-springboot">
             <ProjectCard
               imgPath={springboot}
               isBlog={false}
@@ -102,7 +102,7 @@ function Projects() {
             />
           </Col>
 
-          <Col md={4} className="project-card">
+          <Col md={4} className="project-card" id="project-dsa-journey" data-ai-card="dsa-journey">
             <ProjectCard
               imgPath={dsa}
               isBlog={false}

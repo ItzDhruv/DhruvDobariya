@@ -1,0 +1,313 @@
+.dhruv-ai-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.dhruv-ai-avatar-wrapper {
+  position: absolute;
+  width: 85px;
+  height: 85px;
+  pointer-events: auto;
+  transition: transform 0.55s ease, opacity 0.35s ease;
+  will-change: transform;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dhruv-ai-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  background: rgba(14, 8, 25, 0.92);
+  border: 1px solid rgba(199, 111, 236, 0.35);
+  box-shadow: 0 12px 34px rgba(112, 16, 160, 0.18);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.dhruv-ai-avatar:hover,
+.dhruv-ai-avatar:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 30px rgba(131, 58, 193, 0.28);
+}
+
+.dhruv-ai-avatar .ai-face {
+  width: 70%;
+  height: 70%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.dhruv-ai-avatar .ai-face::before {
+  content: "";
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: translateX(-50%);
+  box-shadow: 0 0 12px rgba(190, 83, 255, 0.45);
+}
+
+.dhruv-ai-avatar .ai-eyes {
+  display: flex;
+  gap: 10px;
+}
+
+.dhruv-ai-avatar .ai-eye {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #cfa0ff, #8c3ed9);
+  box-shadow: inset 0 -2px 6px rgba(0, 0, 0, 0.35);
+  transition: transform 0.25s ease;
+}
+
+.dhruv-ai-avatar.state-thinking .ai-eye {
+  transform: translateY(-2px) scale(1.05);
+}
+
+.dhruv-ai-avatar.state-speaking .ai-eye {
+  transform: translateY(2px) scale(1.1);
+}
+
+.dhruv-ai-avatar.state-pointing {
+  transform: scale(1.02);
+}
+
+.dhruv-ai-avatar.state-excited .ai-face {
+  border-color: #e2a0ff;
+  animation: dhruv-ai-pulse 1.7s ease-in-out infinite;
+}
+
+.dhruv-ai-avatar.state-sleeping .ai-eye {
+  width: 10px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+@keyframes dhruv-ai-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 140, 255, 0.25); }
+  50% { box-shadow: 0 0 0 12px rgba(200, 140, 255, 0.06); }
+}
+
+.dhruv-ai-bubble {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 240px;
+  padding: 12px 14px;
+  background: rgba(8, 4, 18, 0.94);
+  border: 1px solid rgba(191, 85, 255, 0.3);
+  box-shadow: 0 18px 38px rgba(31, 8, 50, 0.45);
+  border-radius: 18px;
+  color: #f7f3ff;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.dhruv-ai-bubble::after {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 8px solid transparent;
+  border-right-color: rgba(8, 4, 18, 0.94);
+}
+
+.dhruv-ai-panel {
+  position: absolute;
+  min-width: 300px;
+  max-width: 340px;
+  right: 100px;
+  bottom: 20px;
+  background: rgba(12, 6, 28, 0.96);
+  border: 1px solid rgba(188, 120, 255, 0.24);
+  box-shadow: 0 22px 48px rgba(16, 7, 42, 0.6);
+  border-radius: 24px;
+  padding: 16px;
+  color: #f9f7ff;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  backdrop-filter: blur(12px);
+}
+
+.dhruv-ai-panel-mobile {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 18px 18px 0 0;
+}
+
+.dhruv-ai-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.dhruv-ai-panel-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #e8d9ff;
+}
+
+.dhruv-ai-panel-header button {
+  border: none;
+  background: transparent;
+  color: #d9c2ff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.dhruv-ai-panel-messages {
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dhruv-ai-message {
+  display: inline-block;
+  max-width: 100%;
+  padding: 10px 12px;
+  border-radius: 18px;
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.dhruv-ai-message.assistant {
+  background: rgba(112, 57, 184, 0.18);
+  border: 1px solid rgba(130, 68, 176, 0.28);
+  align-self: flex-start;
+}
+
+.dhruv-ai-message.user {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  align-self: flex-end;
+}
+
+.dhruv-ai-panel-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dhruv-ai-panel-input input {
+  flex: 1;
+  min-height: 42px;
+  border: 1px solid rgba(171, 104, 235, 0.24);
+  border-radius: 14px;
+  background: rgba(16, 8, 34, 0.93);
+  color: #f8f6ff;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+}
+
+.dhruv-ai-panel-input input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.dhruv-ai-panel-input button {
+  min-width: 80px;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(206, 114, 255, 0.95), rgba(129, 63, 194, 0.95));
+  color: white;
+  font-weight: 600;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.dhruv-ai-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dhruv-ai-suggestion {
+  border: 1px solid rgba(190, 120, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f0ecff;
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.dhruv-ai-suggestion:hover {
+  background: rgba(216, 156, 255, 0.14);
+}
+
+.dhruv-ai-highlight {
+  position: relative;
+  z-index: 9998;
+  box-shadow: 0 0 0 3px rgba(203, 117, 255, 0.35);
+  transition: box-shadow 0.35s ease;
+}
+
+@media (max-width: 860px) {
+  .dhruv-ai-avatar-wrapper {
+    width: 70px;
+    height: 70px;
+  }
+
+  .dhruv-ai-panel {
+    right: 12px;
+    min-width: 260px;
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 640px) {
+  .dhruv-ai-avatar-wrapper {
+    width: 64px;
+    height: 64px;
+  }
+
+  .dhruv-ai-bubble {
+    display: none;
+  }
+
+  .dhruv-ai-panel {
+    min-width: unset;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dhruv-ai-avatar-wrapper,
+  .dhruv-ai-avatar,
+  .dhruv-ai-bubble,
+  .dhruv-ai-panel {
+    transition: none !important;
+    animation: none !important;
+  }
+}
