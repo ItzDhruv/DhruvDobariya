@@ -137,8 +137,12 @@
 
 .dhruv-ai-panel {
   position: absolute;
-  min-width: 300px;
-  max-width: 340px;
+  width: min(520px, calc(100vw - 140px));
+  height: 580px;
+  min-width: 420px;
+  max-width: 520px;
+  min-height: 460px;
+  max-height: calc(100vh - 40px);
   right: 100px;
   bottom: 20px;
   background: rgba(12, 6, 28, 0.96);
@@ -154,12 +158,22 @@
   backdrop-filter: blur(12px);
 }
 
+.dhruv-ai-panel-expanded {
+  width: min(820px, calc(100vw - 48px));
+  height: min(760px, calc(100vh - 48px));
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 48px);
+  right: 24px;
+  bottom: 24px;
+}
+
 .dhruv-ai-panel-mobile {
   left: 0;
   right: 0;
   bottom: 0;
   margin: 0;
   width: 100%;
+  height: min(82vh, 720px);
   max-width: 100%;
   border-radius: 18px 18px 0 0;
 }
@@ -173,20 +187,45 @@
 
 .dhruv-ai-panel-header h4 {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: #e8d9ff;
 }
 
-.dhruv-ai-panel-header button {
+.dhruv-ai-panel-header p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #d3c5f5;
+}
+
+.dhruv-ai-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dhruv-ai-panel-actions button {
+  width: 34px;
+  height: 34px;
   border: none;
   background: transparent;
   color: #d9c2ff;
-  font-size: 1.1rem;
+  border-radius: 10px;
   cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+}
+
+.dhruv-ai-panel-actions button:hover,
+.dhruv-ai-panel-actions button:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+  outline: none;
 }
 
 .dhruv-ai-panel-messages {
-  max-height: 260px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 6px;
   display: flex;
@@ -196,11 +235,13 @@
 
 .dhruv-ai-message {
   display: inline-block;
-  max-width: 100%;
+  max-width: 82%;
   padding: 10px 12px;
   border-radius: 18px;
   font-size: 0.94rem;
   line-height: 1.45;
+  overflow-wrap: anywhere;
+  text-align: left;
 }
 
 .dhruv-ai-message.assistant {
@@ -223,6 +264,7 @@
 
 .dhruv-ai-panel-input input {
   flex: 1;
+  min-width: 0;
   min-height: 42px;
   border: 1px solid rgba(171, 104, 235, 0.24);
   border-radius: 14px;
@@ -251,6 +293,9 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  max-height: 112px;
+  overflow-y: auto;
+  flex-shrink: 0;
 }
 
 .dhruv-ai-suggestion {
@@ -265,6 +310,28 @@
 
 .dhruv-ai-suggestion:hover {
   background: rgba(216, 156, 255, 0.14);
+}
+
+.dhruv-ai-resize-handle {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, transparent 0 45%, rgba(218, 171, 255, 0.85) 46% 54%, transparent 55%),
+    linear-gradient(135deg, transparent 0 62%, rgba(218, 171, 255, 0.55) 63% 70%, transparent 71%);
+  cursor: nwse-resize;
+  opacity: 0.65;
+}
+
+.dhruv-ai-resize-handle:hover,
+.dhruv-ai-resize-handle:focus-visible {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.07);
+  outline: none;
 }
 
 .dhruv-ai-highlight {
@@ -283,7 +350,9 @@
   .dhruv-ai-panel {
     right: 12px;
     min-width: 260px;
-    max-width: 320px;
+    width: min(420px, calc(100vw - 24px));
+    height: 560px;
+    max-width: calc(100vw - 24px);
   }
 }
 
@@ -299,6 +368,12 @@
 
   .dhruv-ai-panel {
     min-width: unset;
+    width: 100%;
+    height: min(82vh, 720px);
+  }
+
+  .dhruv-ai-message {
+    max-width: 92%;
   }
 }
 

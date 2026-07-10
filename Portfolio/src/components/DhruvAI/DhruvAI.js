@@ -17,6 +17,34 @@ const allowedActions = ["none", "navigate", "highlight", "point", "show_contact"
 const allowedTargets = ["home", "about", "projects", "resume", "contact"];
 const allowedEmotions = ["neutral", "thinking", "professional", "excited"];
 
+const stripCodeFence = (text) =>
+  String(text || "")
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+
+const extractMessageText = (text) => {
+  const cleaned = stripCodeFence(text);
+  try {
+    const parsed = JSON.parse(cleaned);
+    if (parsed && typeof parsed === "object" && parsed.message) {
+      return String(parsed.message).trim();
+    }
+  } catch (error) {
+    const matched = cleaned.match(/"message"\s*:\s*"((?:\\.|[^"\\])*)"/);
+    if (matched) {
+      try {
+        return JSON.parse(`"${matched[1]}"`).trim();
+      } catch (parseError) {
+        return matched[1].replace(/\\"/g, '"').trim();
+      }
+    }
+  }
+
+  return cleaned;
+};
+
 function DhruvAI() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -29,17 +57,22 @@ function DhruvAI() {
       text: "Hey, I'm Dhruv AI. Ask me about Dhruv's work.",
     },
   ]);
-  const [isThinking, setIsThinking] = useState(false);
+  const [pendingRequests, setPendingRequests] = useState(0);
   const [avatarState, setAvatarState] = useState("idle");
   const [position, setPosition] = useState({ x: 20, y: 100 });
   const [introVisible, setIntroVisible] = useState(false);
   const [isSleeping, setIsSleeping] = useState(false);
   const [highlightedId, setHighlightedId] = useState("");
   const [clickCount, setClickCount] = useState(0);
+  const [panelMode, setPanelMode] = useState("normal");
+  const [panelSize, setPanelSize] = useState({ width: 520, height: 580 });
   const wrapperRef = useRef(null);
   const activityTimeoutRef = useRef(null);
+  const activeRequestsRef = useRef(0);
+  const resizeStateRef = useRef(null);
 
   const isMobile = useMemo(() => window.innerWidth < 760, []);
+  const isThinking = pendingRequests > 0;
 
   const getElementByTarget = (target) => {
     const config = sectionMap[target];
@@ -52,7 +85,8 @@ function DhruvAI() {
     const footer = document.querySelector(".footer")?.getBoundingClientRect();
     const padding = 12;
     const top = (navbar?.bottom || 0) + padding;
-    const bottom = (footer?.top || window.innerHeight) - padding - (isMobile ? 64 : 85);
+    const visibleBottom = Math.min(footer?.top || window.innerHeight, window.innerHeight);
+    const bottom = visibleBottom - padding - (isMobile ? 64 : 85);
     const right = window.innerWidth - padding - (isMobile ? 64 : 85);
     const left = padding;
 
@@ -94,6 +128,22 @@ function DhruvAI() {
     }
   };
 
+  const togglePanelMode = () => {
+    setPanelMode((mode) => (mode === "expanded" ? "normal" : "expanded"));
+  };
+
+  const startPanelResize = (event) => {
+    if (isMobile || panelMode === "expanded") return;
+    event.preventDefault();
+    const pointer = event.touches?.[0] || event;
+    resizeStateRef.current = {
+      startX: pointer.clientX,
+      startY: pointer.clientY,
+      startWidth: panelSize.width,
+      startHeight: panelSize.height,
+    };
+  };
+
   const inferSafeTarget = (target) => {
     if (!allowedTargets.includes(target)) {
       return "none";
@@ -102,7 +152,8 @@ function DhruvAI() {
   };
 
   const handleAIResponse = async (messageText) => {
-    setIsThinking(true);
+    activeRequestsRef.current += 1;
+    setPendingRequests(activeRequestsRef.current);
     setAvatarState("thinking");
     setStatusMessage("Thinking...");
     try {
@@ -113,8 +164,9 @@ function DhruvAI() {
       const safeEmotion = allowedEmotions.includes(emotion) ? emotion : "neutral";
 
       if (message) {
-        setMessages((prev) => [...prev, { role: "assistant", text: message }]);
-        setStatusMessage(message);
+        const displayMessage = extractMessageText(message);
+        setMessages((prev) => [...prev, { role: "assistant", text: displayMessage }]);
+        setStatusMessage(displayMessage);
       }
       setAvatarState(safeEmotion === "thinking" ? "thinking" : safeEmotion);
 
@@ -169,8 +221,9 @@ function DhruvAI() {
       setStatusMessage("AI service unavailable.");
       setAvatarState("neutral");
     } finally {
-      setIsThinking(false);
-      if (!isSleeping) {
+      activeRequestsRef.current = Math.max(0, activeRequestsRef.current - 1);
+      setPendingRequests(activeRequestsRef.current);
+      if (!isSleeping && activeRequestsRef.current === 0) {
         setTimeout(() => setAvatarState("idle"), 1000);
       }
     }
@@ -236,6 +289,42 @@ function DhruvAI() {
     }
   }, [highlightedId]);
 
+  useEffect(() => {
+    const handleResizeMove = (event) => {
+      if (!resizeStateRef.current) return;
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+      const pointer = event.touches?.[0] || event;
+      const { startX, startY, startWidth, startHeight } = resizeStateRef.current;
+      const nextWidth = Math.min(
+        Math.max(380, startWidth + startX - pointer.clientX),
+        Math.max(380, window.innerWidth - 140)
+      );
+      const nextHeight = Math.min(
+        Math.max(460, startHeight + startY - pointer.clientY),
+        Math.max(460, window.innerHeight - 80)
+      );
+      setPanelSize({ width: nextWidth, height: nextHeight });
+    };
+
+    const stopResize = () => {
+      resizeStateRef.current = null;
+    };
+
+    window.addEventListener("mousemove", handleResizeMove);
+    window.addEventListener("mouseup", stopResize);
+    window.addEventListener("touchmove", handleResizeMove, { passive: false });
+    window.addEventListener("touchend", stopResize);
+
+    return () => {
+      window.removeEventListener("mousemove", handleResizeMove);
+      window.removeEventListener("mouseup", stopResize);
+      window.removeEventListener("touchmove", handleResizeMove);
+      window.removeEventListener("touchend", stopResize);
+    };
+  }, []);
+
   return (
     <div className="dhruv-ai-root" ref={wrapperRef}>
       <div
@@ -253,6 +342,10 @@ function DhruvAI() {
       <ChatPanel
         open={isChatOpen}
         onClose={() => setChatOpen(false)}
+        panelMode={panelMode}
+        onTogglePanelMode={togglePanelMode}
+        panelSize={panelSize}
+        onResizeStart={startPanelResize}
         messages={messages}
         inputValue={inputValue}
         onInputChange={setInputValue}

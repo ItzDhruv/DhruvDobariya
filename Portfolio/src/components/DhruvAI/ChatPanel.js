@@ -1,4 +1,5 @@
 import React from "react";
+import { FaCompressAlt, FaExpandAlt } from "react-icons/fa";
 import "./DhruvAI.css";
 
 const suggestions = [
@@ -15,6 +16,10 @@ const suggestions = [
 function ChatPanel({
   open,
   onClose,
+  panelMode,
+  onTogglePanelMode,
+  panelSize,
+  onResizeStart,
   messages,
   inputValue,
   onInputChange,
@@ -27,18 +32,44 @@ function ChatPanel({
     return null;
   }
 
+  const isExpanded = panelMode === "expanded";
+  const panelStyle =
+    isMobile || isExpanded
+      ? undefined
+      : {
+          width: `${panelSize.width}px`,
+          maxWidth: `${panelSize.width}px`,
+          height: `${panelSize.height}px`,
+          maxHeight: `${panelSize.height}px`,
+        };
+
   return (
-    <div className={`dhruv-ai-panel ${isMobile ? "dhruv-ai-panel-mobile" : ""}`}>
+    <div
+      className={`dhruv-ai-panel ${isMobile ? "dhruv-ai-panel-mobile" : ""} ${
+        isExpanded ? "dhruv-ai-panel-expanded" : ""
+      }`}
+      style={panelStyle}
+    >
       <div className="dhruv-ai-panel-header">
         <div>
           <h4>Dhruv AI</h4>
-          <p style={{ margin: 0, fontSize: "0.8rem", color: "#d3c5f5" }}>
+          <p>
             Ask about his experience, skills, projects, and contact.
           </p>
         </div>
-        <button onClick={onClose} aria-label="Close Dhruv AI chat">
-          ✕
-        </button>
+        <div className="dhruv-ai-panel-actions">
+          <button
+            type="button"
+            onClick={onTogglePanelMode}
+            aria-label={isExpanded ? "Minimize Dhruv AI chat" : "Maximize Dhruv AI chat"}
+            title={isExpanded ? "Minimize" : "Maximize"}
+          >
+            {isExpanded ? <FaCompressAlt /> : <FaExpandAlt />}
+          </button>
+          <button type="button" onClick={onClose} aria-label="Close Dhruv AI chat" title="Close">
+            ✕
+          </button>
+        </div>
       </div>
       <div className="dhruv-ai-panel-messages" aria-live="polite">
         {messages.map((message, index) => (
@@ -82,6 +113,15 @@ function ChatPanel({
           </button>
         ))}
       </div>
+      {!isMobile && !isExpanded && (
+        <button
+          type="button"
+          className="dhruv-ai-resize-handle"
+          aria-label="Resize Dhruv AI chat"
+          onMouseDown={onResizeStart}
+          onTouchStart={onResizeStart}
+        />
+      )}
     </div>
   );
 }

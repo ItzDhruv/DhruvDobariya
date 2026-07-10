@@ -1,9 +1,13 @@
 const http = require("http");
 const https = require("https");
 const { URL } = require("url");
-
+require("dotenv").config({ quiet: true });
 const PORT = process.env.PORT || 4001;
 const API_KEY = process.env.GEMINI_API_KEY;
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash";
+const allowedActions = ["none", "navigate", "highlight", "point", "show_contact"];
+const allowedTargets = ["home", "about", "projects", "resume", "contact"];
+const allowedEmotions = ["neutral", "thinking", "professional", "excited"];
 
 if (!API_KEY) {
   console.error("GEMINI_API_KEY is required to run the AI backend.");
@@ -61,11 +65,14 @@ Question: ${question}`;
 
 const createGeminiRequest = (prompt) => {
   const request = JSON.stringify({
-    prompt: { text: prompt },
-    temperature: 0.2,
-    maxOutputTokens: 420,
-    topP: 0.9,
-    topK: 40,
+    model: GEMINI_MODEL,
+    input: prompt,
+    generation_config: {
+      temperature: 0.2,
+      max_output_tokens: 800,
+      top_p: 0.9,
+      top_k: 40,
+    },
   });
   return request;
 };
@@ -73,12 +80,13 @@ const createGeminiRequest = (prompt) => {
 const callGemini = (prompt) =>
   new Promise((resolve, reject) => {
     const requestBody = createGeminiRequest(prompt);
-    const url = new URL(`https://generativeai.googleapis.com/v1beta2/models/text-bison-001:generate?key=${API_KEY}`);
+    const url = new URL("https://generativelanguage.googleapis.com/v1beta/interactions");
     const options = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Content-Length": Buffer.byteLength(requestBody),
+        "x-goog-api-key": API_KEY,
       },
     };
 
@@ -93,7 +101,12 @@ const callGemini = (prompt) =>
         }
         try {
           const data = JSON.parse(body);
-          const candidate = data?.candidates?.[0]?.content;
+          const stepText = data?.steps
+            ?.flatMap((step) => step.content || [])
+            .map((content) => content.text || "")
+            .join("")
+            .trim();
+          const candidate = (data?.output_text || stepText || "").trim();
           if (!candidate) {
             return reject(new Error("Empty Gemini response."));
           }
@@ -109,12 +122,101 @@ const callGemini = (prompt) =>
     req.end();
   });
 
-const extractJson = (text) => {
-  const matched = text.match(/\{[\s\S]*\}$/);
+const stripCodeFence = (text) =>
+  text
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+
+const extractMessageField = (text) => {
+  const matched = stripCodeFence(text).match(/"message"\s*:\s*"((?:\\.|[^"\\])*)"/);
   if (!matched) {
-    throw new Error("Could not parse JSON from Gemini response.");
+    return "";
   }
-  return JSON.parse(matched[0]);
+
+  try {
+    return JSON.parse(`"${matched[1]}"`).trim();
+  } catch (error) {
+    return matched[1].replace(/\\"/g, '"').trim();
+  }
+};
+
+const findJsonObject = (text) => {
+  const cleaned = stripCodeFence(text);
+  for (let start = cleaned.indexOf("{"); start !== -1; start = cleaned.indexOf("{", start + 1)) {
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+
+    for (let index = start; index < cleaned.length; index += 1) {
+      const char = cleaned[index];
+
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+
+      if (char === "\\") {
+        escaped = true;
+        continue;
+      }
+
+      if (char === '"') {
+        inString = !inString;
+        continue;
+      }
+
+      if (inString) {
+        continue;
+      }
+
+      if (char === "{") {
+        depth += 1;
+      } else if (char === "}") {
+        depth -= 1;
+        if (depth === 0) {
+          return cleaned.slice(start, index + 1);
+        }
+      }
+    }
+  }
+
+  return "";
+};
+
+const normalizeAIResponse = (value) => ({
+  message: String(value.message || "").trim(),
+  action: allowedActions.includes(value.action) ? value.action : "none",
+  target: allowedTargets.includes(value.target) ? value.target : "home",
+  focusItem: String(value.focusItem || "").trim(),
+  emotion: allowedEmotions.includes(value.emotion) ? value.emotion : "professional",
+});
+
+const createFallbackResponse = (text) => {
+  const message = (extractMessageField(text) || stripCodeFence(text)).replace(/\s+/g, " ").trim();
+  return normalizeAIResponse({
+    message:
+      message ||
+      "I can answer questions about Dhruv's experience, skills, projects, and professional background.",
+    action: "none",
+    target: "home",
+    focusItem: "",
+    emotion: "professional",
+  });
+};
+
+const extractJson = (text) => {
+  const cleaned = stripCodeFence(text);
+  try {
+    return normalizeAIResponse(JSON.parse(cleaned));
+  } catch (error) {
+    const jsonText = findJsonObject(cleaned);
+    if (!jsonText) {
+      throw new Error(`Could not parse JSON from Gemini response: ${cleaned.slice(0, 180)}`);
+    }
+    return normalizeAIResponse(JSON.parse(jsonText));
+  }
 };
 
 const server = http.createServer(async (req, res) => {
@@ -134,9 +236,15 @@ const server = http.createServer(async (req, res) => {
 
       const prompt = createGeminiPrompt(question);
       const geminiResult = await callGemini(prompt);
-      const parsed = extractJson(geminiResult);
+      let parsed;
+      try {
+        parsed = extractJson(geminiResult);
+      } catch (error) {
+        console.warn(error.message);
+        parsed = createFallbackResponse(geminiResult);
+      }
 
-      if (!parsed.message || !parsed.action || !parsed.target || !parsed.emotion) {
+      if (!parsed.message) {
         throw new Error("Gemini returned invalid structured response.");
       }
 
@@ -151,6 +259,6 @@ const server = http.createServer(async (req, res) => {
   sendJson(res, 404, { error: "Not found" });
 });
 
-server.listen(PORT, () => {
+server.listen(PORT, "127.0.0.1", () => {
   console.log(`Dhruv AI backend listening on port ${PORT}`);
 });
