@@ -1,7 +1,7 @@
 import React from "react";
 import "./DhruvAI.css";
 
-function Avatar({ state, onActivate }) {
+function Avatar({ state, displayMode, onActivate }) {
   return (
     <button
       type="button"
@@ -9,12 +9,16 @@ function Avatar({ state, onActivate }) {
       aria-label="Open Dhruv AI assistant"
       onClick={onActivate}
     >
-      <div className="ai-face">
-        <div className="ai-eyes">
-          <span className="ai-eye" />
-          <span className="ai-eye" />
+      {displayMode === "ai" ? (
+        <span className="ai-label" aria-hidden="true">AI</span>
+      ) : (
+        <div className="ai-face">
+          <div className="ai-eyes">
+            <span className="ai-eye" />
+            <span className="ai-eye" />
+          </div>
         </div>
-      </div>
+      )}
     </button>
   );
 }

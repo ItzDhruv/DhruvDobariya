@@ -32,7 +32,7 @@ const extractMessageText = (text) => {
       return String(parsed.message).trim();
     }
   } catch (error) {
-    const matched = cleaned.match(/"message"\s*:\s*"((?:\\.|[^"\\])*)"/);
+    const matched = cleaned.match(/"message"\s*:\s*"((?:\\.|[^"\\])*)(?:"|$)/);
     if (matched) {
       try {
         return JSON.parse(`"${matched[1]}"`).trim();
@@ -42,7 +42,11 @@ const extractMessageText = (text) => {
     }
   }
 
-  return cleaned;
+  // Do not expose a malformed JSON wrapper in the chat if Gemini stops mid-response.
+  return cleaned
+    .replace(/^\{?\s*"?message"?\s*:\s*"?/, "")
+    .replace(/["}]+\s*$/, "")
+    .trim();
 };
 
 function DhruvAI() {
@@ -66,6 +70,7 @@ function DhruvAI() {
   const [clickCount, setClickCount] = useState(0);
   const [panelMode, setPanelMode] = useState("normal");
   const [panelSize, setPanelSize] = useState({ width: 520, height: 580 });
+  const [avatarDisplay, setAvatarDisplay] = useState("robot");
   const wrapperRef = useRef(null);
   const activityTimeoutRef = useRef(null);
   const activeRequestsRef = useRef(0);
@@ -211,14 +216,31 @@ function DhruvAI() {
         }
       }
     } catch (error) {
+      const errorMessage = error.message || "Unknown AI error";
+      const isQuotaError = /quota|rate limit|resource_exhausted|too many requests|exceeded/i.test(errorMessage);
+      const isNetworkError = /failed to fetch|networkerror|load failed/i.test(errorMessage);
+      const isGeminiSetupError =
+        errorMessage.startsWith("Gemini API error") ||
+        errorMessage.startsWith("Missing REACT_APP_GEMINI_API_KEY") ||
+        errorMessage.startsWith("Gemini returned") ||
+        isQuotaError ||
+        isNetworkError;
+      const errorText = isGeminiSetupError
+        ? isQuotaError
+          ? "Gemini quota is exhausted for this API key/project. Try again later, switch to a key with available quota, or enable billing in Google AI Studio."
+          : isNetworkError
+          ? "The browser could not reach Gemini. Check your internet connection, API key browser restrictions, ad blocker, or CORS/network settings."
+          : errorMessage
+        : "Sorry, the portfolio AI is unavailable right now. Please try again in a moment.";
+      console.error(error);
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          text: "Sorry, the portfolio AI is unavailable right now. Please try again in a moment.",
+          text: errorText,
         },
       ]);
-      setStatusMessage("AI service unavailable.");
+      setStatusMessage(isGeminiSetupError ? "Gemini setup needs attention." : "AI service unavailable.");
       setAvatarState("neutral");
     } finally {
       activeRequestsRef.current = Math.max(0, activeRequestsRef.current - 1);
@@ -236,6 +258,19 @@ function DhruvAI() {
     setInputValue("");
     await handleAIResponse(message);
   };
+
+  useEffect(() => {
+    if (isChatOpen) {
+      setAvatarDisplay("robot");
+      return undefined;
+    }
+
+    const displayTimer = window.setInterval(() => {
+      setAvatarDisplay((mode) => (mode === "robot" ? "ai" : "robot"));
+    }, 3000);
+
+    return () => window.clearInterval(displayTimer);
+  }, [isChatOpen]);
 
   useEffect(() => {
     const handleActivityEvent = () => {
@@ -331,7 +366,7 @@ function DhruvAI() {
         className="dhruv-ai-avatar-wrapper"
         style={{ transform: `translate3d(${position.x}px, ${position.y}px, 0)` }}
       >
-        <Avatar state={avatarState} onActivate={openChat} />
+        <Avatar state={avatarState} displayMode={avatarDisplay} onActivate={openChat} />
         {introVisible && (
           <div className="dhruv-ai-bubble">Hey, I’m Dhruv AI. Ask me about his work.</div>
         )}
